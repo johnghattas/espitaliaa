@@ -15,7 +15,7 @@ class GuestController extends Controller
 
     public function getAllDoctors(){
 
-        return $this->dataJson(Doctor::paginate(10));
+        return $this->dataJson(Doctor::has('timeTables')->paginate(10));
     }
 
 
