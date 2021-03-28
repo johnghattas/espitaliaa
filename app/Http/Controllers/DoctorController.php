@@ -21,26 +21,26 @@ class DoctorController extends Controller
     public function insertOrUpdate(Request $request)
     {
         $validator = request()->validate([
-            'is_first_come' => 'required',
-            'duration_min' => 'required',
+            'is_first_come' => 'required|bool',
+            'duration_min' => 'required|int',
 
             'tableList'=>'required',
             'tableList.*.day' => 'required|string|max:3',
             'tableList.*.is_avail' => 'required|boolean',
-            'tableList.*.start_time' => 'sometimes|string|min:5|max:5',
-            'tableList.*.end_time' => 'sometimes|string|min:5|max:5',
+            'tableList.*.start_time' => 'sometimes|string|min:5|max:5|date_format:H:i',
+            'tableList.*.end_time' => 'sometimes|string|min:5|max:5|date_format:H:i|after_or_equal:tableList.*.start_time',
             'tableList.*.count_att' => 'sometimes|integer',
         ]);
 
         $isFirstCome = $validator['is_first_come'];
         $duration = $validator['duration_min'];
-        $doctor = Auth::user();
+        $doctor = Doctor::find(Auth::id());
 
         $doctor->is_first_come = $isFirstCome;
         if (!$isFirstCome && $duration) {
             $doctor->duration_min = $duration;
         }
-        $doctor->save;
+        $doctor->save();
 
         //isert or update time table
         $this->insertTimeTable($validator['tableList'], $doctor);
