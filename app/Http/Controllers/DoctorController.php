@@ -24,7 +24,7 @@ class DoctorController extends Controller
             'is_first_come' => 'required|bool',
             'duration_min' => 'required|int',
 
-            'tableList'=>'required',
+            'tableList' => 'required',
             'tableList.*.day' => 'required|string|max:3',
             'tableList.*.is_avail' => 'required|boolean',
             'tableList.*.start_time' => 'sometimes|string|min:5|max:5|date_format:H:i',
@@ -48,20 +48,23 @@ class DoctorController extends Controller
         return $this->dataJson('Done');
     }
 
-    public function getTables(){
+    public function getTables()
+    {
         $doctor = Doctor::find(Auth::id());
 
-        return $this->dataJson(['is_first_come'=> $doctor['is_first_come'], 'duration_min' => $doctor['duration_min'],'tables'=>$doctor->timeTables]);
+        return $this->dataJson(['is_first_come' => $doctor['is_first_come'], 'duration_min' => $doctor['duration_min'], 'tables' => $doctor->timeTables]);
     }
 
 
-    public function showAllReservations(/* string $email */){
+    public function showAllReservations()
+    {
         // $doctor = Doctor::findOrFail($email);
         $doctor = Auth::user();
-        $this->dataJson(Reservation::with('patient')->where('doctor_id' , $doctor->email)->latest('date') ->get());
+        return $this->dataJson(Reservation::with('patient')->where('doctor_id', $doctor->email)->latest('date')->get());
     }
 
-    public function changeState( Request $request){
+    public function changeState(Request $request)
+    {
         $validator = request()->validate([
             'id' => "required|int",
             'state' => 'required|gte:-1|lte:3'
@@ -69,7 +72,7 @@ class DoctorController extends Controller
         $doctor = Auth::user();
 
         $reser = Reservation::findOrFail($validator['id']);
-        if($reser->doctor_id !== $doctor->email){
+        if ($reser->doctor_id !== $doctor->email) {
             return $this->errorJson('not Authorized', 401);
         }
         $reser->state = $validator['state'];

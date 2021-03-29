@@ -92,8 +92,8 @@ class PatientController extends Controller
 
     public function showAllReservations()
     {
-        $patient = Auth::user();
-        $this->dataJson(
+        $patient = User::find(Auth::id());
+        return $this->dataJson(
             Reservation::with('doctor')
                 ->where('pationt_id', $patient->email)
                 ->latest('date')->get()

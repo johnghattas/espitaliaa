@@ -23,7 +23,7 @@ Route::middleware('auth:doctor')->get('/user', function (Request $request) {
 Route::prefix('doctor/')->group( function () {
     Route::get('tables', [App\Http\Controllers\DoctorController::class, 'getTables']);
     Route::patch('appoints', [App\Http\Controllers\DoctorController::class, 'insertOrUpdate']);
-    Route::get('reserve/{email}', [App\Http\Controllers\DoctorController::class, 'showAllReservations']);
+    Route::get('reserve', [App\Http\Controllers\DoctorController::class, 'showAllReservations']);
     Route::patch('changeState', [App\Http\Controllers\DoctorController::class, 'changeState']);
 });
 
